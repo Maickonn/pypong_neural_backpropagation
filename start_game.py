@@ -15,7 +15,6 @@ from utils.neural_network import NeuralNetwork
 # Constants
 WINDOW_WIDTH = 700
 WINDOW_HEIGHT = 600
-MAX_RANDOM_GENOME = 1
 
 # Initialization
 pygame.init()
@@ -51,7 +50,8 @@ while True:
             sys.exit()
 
     # A.I directions
-    ai_result = neural_network.get_output(numpy.array([[ai_player.rect.x / WINDOW_WIDTH, my_ball.rect.x / WINDOW_WIDTH]])) # Get result of the neural
+    inputs = numpy.array([[ai_player.rect.x / WINDOW_WIDTH, my_ball.rect.x / WINDOW_WIDTH]])
+    ai_result = neural_network.get_output(inputs) # Get result of the neural
     if ai_result[0][0] >= 0.6: # This can be any value of 0.0 to 1.0
         move_direction = "right"
     elif ai_result[0][0] <= 0.4:
@@ -104,11 +104,11 @@ while True:
         # This make the A.I learn with self error
         for i in range(50):
             if ai_player.rect.x < my_ball.rect.x:
-                neural_network.train(ai_result, numpy.array([1]))
+                neural_network.train(inputs, ai_result, numpy.array([1]))
             else:
-                neural_network.train(ai_result, numpy.array([0]))
+                neural_network.train(inputs, ai_result, numpy.array([0]))
 
-            ai_result = neural_network.get_output(numpy.array([[ai_player.rect.x / WINDOW_WIDTH, my_ball.rect.x / WINDOW_WIDTH]]))  # Get result of the neural
+            ai_result = neural_network.get_output(inputs)  # Get result of the neural
 
         print("New mutation: " + str(neural_network.input_weights) + " - " + str(neural_network.hidden_weights))
 
